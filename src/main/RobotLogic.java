@@ -20,7 +20,10 @@ public class RobotLogic {
 	public static void main(String[] args) {
 		
 		long startTime = System.currentTimeMillis();
-
+		Tracking track = new Tracking();
+//		new Thread(track).start();
+		track.run();
+		listOfPositions.addAll(track.getData());
 		// TODO: CALL CONSTRUCTOR OF HSV_IMAGE_ANALYSIS CLASS
 
 		while (true) {
@@ -32,7 +35,7 @@ public class RobotLogic {
 			// fetch_data_from_hsv_image_class();
 			
 			// TODO: listOfPositions = fetch_data_from_hsv_image_class();
-	
+			
 			// get data from video feed (hsv_image_class)
 			// center positions of all red blocks
 			redBlocks = listOfPositions.get(0);

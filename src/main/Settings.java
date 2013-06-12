@@ -89,4 +89,64 @@ public class Settings {
 		return Dilate_lvl;
 	}
 	
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setR_min(int r_min) {
+		this.r_min = r_min;
+	}
+
+	public void setG_min(int g_min) {
+		this.g_min = g_min;
+	}
+
+	public void setB_min(int b_min) {
+		this.b_min = b_min;
+	}
+
+	public void setR_max(int r_max) {
+		this.r_max = r_max;
+	}
+
+	public void setG_max(int g_max) {
+		this.g_max = g_max;
+	}
+
+	public void setB_max(int b_max) {
+		this.b_max = b_max;
+	}
+
+	public void setS_min(int s_min) {
+		this.s_min = s_min;
+	}
+
+	public void setS_max(int s_max) {
+		this.s_max = s_max;
+	}
+
+	public void setSmooth_lvl(int smooth_lvl) {
+		this.smooth_lvl = smooth_lvl;
+	}
+
+	public void setErode_lvl(int erode_lvl) {
+		this.erode_lvl = erode_lvl;
+	}
+
+	public void setDilate_lvl(int dilate_lvl) {
+		Dilate_lvl = dilate_lvl;
+	}
+
+	public String toString(){
+		return "Name: "+this.name+"Color: "+this.color+"\nG_min: "+this.g_min;
+	}
+	
 }
