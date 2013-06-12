@@ -30,6 +30,7 @@ public class BluetoothTest3 {
 		connect();
 		outDat.writeByte(5);
 		System.out.println("heste");
+		while(true);
 	}
 	private static boolean connect() {
 		try {
@@ -54,13 +55,15 @@ public class BluetoothTest3 {
 			nxtComm.open(nxtInfo[0]);
 		} catch (NXTCommException e) {
 			System.out.println("Exception in open");
+			return false;
 		}
 		
 		is = nxtComm.getInputStream();
 		os = nxtComm.getOutputStream();
 		inDat = new DataInputStream(is);
 		outDat = new DataOutputStream(os);
-		while(true);
+		//while(true);
+		return true;
 		
 	}
 

@@ -39,7 +39,7 @@ public class Bluetoothtest2 {
 
 		for (int i = 0; i < 100; i++) {
 			try {
-				System.out.println("Sending " + (i * 30000));
+				System.out.println("Sending " + (i +1));
 				dos.writeInt((i * 30000));
 				dos.flush();
 
