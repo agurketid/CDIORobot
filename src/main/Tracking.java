@@ -23,16 +23,17 @@ import com.googlecode.javacv.cpp.opencv_core.*;
 public class Tracking implements Runnable {
 
 	Boolean running = true;
+	Boolean trackingThreadFinished = false;
 	GUI gui;
 	CvRect rect;
 	OpenCVFrameGrabber grapper;
 	IplImage image,hsv,thresh;
 	CvMemStorage storage = CvMemStorage.create();
-	static ArrayList<ArrayList<Position>> dataList = new ArrayList<ArrayList<Position>>();
+	ArrayList<ArrayList<Position>> dataList = new ArrayList<ArrayList<Position>>();
 	
 	public Tracking() {
 		gui = new GUI();
-		new Thread(gui).start();
+		new Thread(gui).run();
 		setupCamera();
 	}
 	
@@ -137,20 +138,23 @@ public class Tracking implements Runnable {
 //			System.out.println(blocklist.toString());
 		}
 		//If all settings are final check all settings
+		
 		imageProcessing();
 	}
 	
-	public void imageProcessing() {
+	public void imageProcessing() throws Exception {
+		image = grapper.grab();
+		dataList.clear();
 		for(Settings setting : gui.getColorSettings()) {
 			System.out.println(setting.toString());
 			ArrayList<Position> tmp_position = new ArrayList<Position>();
 			CvSeq contours = new CvSeq();
 
-			try {
-				image = grapper.grab();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+//			try {
+//				image = grapper.grab();
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
 
 			/* FILTERS APPLIED */
 			cvThreshold(thresh, thresh, 64, 255, CV_THRESH_BINARY);
@@ -187,8 +191,9 @@ public class Tracking implements Runnable {
 				contours = contours.h_next();
 			}
 			System.out.println("List Content:"+tmp_position);
-			dataList.add(tmp_position);
-			System.out.println("Final list:"+dataList.get(0).toString());
+			
+			dataList.add(new ArrayList<Position>(tmp_position));
+			System.out.println("Final list:"+dataList.toString());
 			tmp_position.clear();
 			gui.setGreen_OK(false);
 			gui.setRed_OK(false);
@@ -197,6 +202,8 @@ public class Tracking implements Runnable {
 			cvClearMemStorage(storage);
 //			System.out.println(blocklist.toString());
 		}
+		trackingThreadFinished = true;
+		
 	}
 	
 	public IplImage getThresholdedImage(IplImage img, IplImage imgHSV,

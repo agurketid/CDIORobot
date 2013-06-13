@@ -1,6 +1,10 @@
 package main;
 
 import java.util.ArrayList;
+
+import com.googlecode.javacv.FrameGrabber.Exception;
+import com.googlecode.javacv.cpp.avfilter.AVFilterPad.Get_audio_buffer;
+
 import lejos.nxt.Motor;
 
 public class RobotLogic {
@@ -21,13 +25,13 @@ public class RobotLogic {
 		
 		long startTime = System.currentTimeMillis();
 		Tracking track = new Tracking();
-//		new Thread(track).start();
-		track.run();
-		listOfPositions.addAll(track.getData());
+		new Thread(track).run();
+		//track.run();
 		// TODO: CALL CONSTRUCTOR OF HSV_IMAGE_ANALYSIS CLASS
 
-		while (true) {
-			
+		while (track.trackingThreadFinished != false) {
+			System.out.println("FINALDATA, TEST: " + track.getData().toString());
+			listOfPositions.addAll(track.getData());
 			// TODO: call function in hsv_image_class
 			// SHOULD RETURN A LIST OF LISTS WITH DATA
 			// I.E. A LIST OF POSITIONS OF RED BLOCKS, GREEN BLOCKS, POSITION OF ROBOT FRONT AND BACK
@@ -39,40 +43,53 @@ public class RobotLogic {
 			// get data from video feed (hsv_image_class)
 			// center positions of all red blocks
 			redBlocks = listOfPositions.get(0);
+			System.out.println("REDBLOCKS, TEST: "+ redBlocks.toString());
 			// center positions for all green blocks
 			greenBlocks = listOfPositions.get(1);
+			System.out.println("GREENBLOCKS, TEST: "+ greenBlocks.toString());
 			// center position for the robot's front square
-			robotFront = listOfPositions.get(2).get(0);
+			System.out.println("ROBOTFRONT, TEST: " +listOfPositions.get(2).toString());
+			robotFront = listOfPositions.get(2).get(0);//TODO
 			// center position for the robot's back square
-			robotBack = listOfPositions.get(3).get(0);
+			robotBack = (listOfPositions.get(3)).get(0);
 			
-			// initialize robot
-			robot.robotInit(robotFront, robotBack);
-			// map ports
-			ports = mapPorts(redBlocks, greenBlocks);
-			// map route
-			route = mapRoute(ports, robot);
-			// calculate robot movement - left/right
-			robotMovement = calculateRobotMovement(robot, route);
-			// calculate speed difference on wheel
-			speedDifference = calculateRobotSpeed(robot, route);
-			
-			// send movement signals to the Robot's wheels
-			if (robotMovement.equals("RIGHT")) {
-				Motor.A.setSpeed(robotSpeed);
-				Motor.B.setSpeed(robotSpeed-speedDifference);
-				Motor.A.backward();
-				Motor.B.backward();
-			} else { // robotMovement.equals("LEFT")
-				Motor.B.setSpeed(robotSpeed);
-				Motor.A.setSpeed(robotSpeed-speedDifference);
-				Motor.B.backward();
-				Motor.A.backward();
+			System.out.println(redBlocks.toString());
+			System.out.println(greenBlocks.toString());
+			System.out.println(robotFront.toString());
+			System.out.println(robotBack.toString());
+			try {
+				track.imageProcessing();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			
-			long middle = System.currentTimeMillis();
-			long middleTime = middle - startTime;
-			System.out.println("Calculation time: " + middleTime);
+			// initialize robot
+//			robot.robotInit(robotFront, robotBack);
+//			// map ports
+//			ports = mapPorts(redBlocks, greenBlocks);
+//			// map route
+//			route = mapRoute(ports, robot);
+//			// calculate robot movement - left/right
+//			robotMovement = calculateRobotMovement(robot, route);
+//			// calculate speed difference on wheel
+//			speedDifference = calculateRobotSpeed(robot, route);
+//			
+//			// send movement signals to the Robot's wheels
+//			if (robotMovement.equals("RIGHT")) {
+//				Motor.A.setSpeed(robotSpeed);
+//				Motor.B.setSpeed(robotSpeed-speedDifference);
+//				Motor.A.backward();
+//				Motor.B.backward();
+//			} else { // robotMovement.equals("LEFT")
+//				Motor.B.setSpeed(robotSpeed);
+//				Motor.A.setSpeed(robotSpeed-speedDifference);
+//				Motor.B.backward();
+//				Motor.A.backward();
+//			}
+//			
+//			long middle = System.currentTimeMillis();
+//			long middleTime = middle - startTime;
+//			System.out.println("Calculation time: " + middleTime);
 		}
 	}
 	
