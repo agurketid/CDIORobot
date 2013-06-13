@@ -20,7 +20,7 @@ import com.googlecode.javacv.cpp.avcodec.AVHWAccel.Start_frame;
 import com.googlecode.javacv.cpp.opencv_legacy.CvBlobDetector;
 import com.googlecode.javacv.cpp.opencv_core.*;
 
-public class Tracking implements Runnable {
+public class Tracking {
 
 	Boolean running = true;
 	Boolean trackingThreadFinished = false;
@@ -35,6 +35,12 @@ public class Tracking implements Runnable {
 		gui = new GUI();
 		new Thread(gui).run();
 		setupCamera();
+		try {
+			capture();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private void setupCamera() {
@@ -216,16 +222,6 @@ public class Tracking implements Runnable {
 		return imgThreshed;
 	}
 
-	@Override
-	public void run() {
-		try {
-			capture();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
 
 	
 /*	public synchronized void putInto(Color color, ArrayList<Block> blocks_temp){

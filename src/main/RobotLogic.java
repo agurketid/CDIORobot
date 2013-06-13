@@ -2,94 +2,92 @@ package main;
 
 import java.util.ArrayList;
 
-import com.googlecode.javacv.FrameGrabber.Exception;
-import com.googlecode.javacv.cpp.avfilter.AVFilterPad.Get_audio_buffer;
-
-import lejos.nxt.Motor;
-
 public class RobotLogic {
 
 	static ArrayList<Position> redBlocks = new ArrayList<Position>();
 	static ArrayList<Position> greenBlocks = new ArrayList<Position>();
-	static Position robotFront = new Position();
-	static Position robotBack = new Position();
+	static Position robot1Front = new Position();
+	static Position robot1Back = new Position();
+	static Position robot2Front = new Position();
+	static Position robot2Back = new Position();
 	static ArrayList<Port> ports = new ArrayList<Port>();
-	static ArrayList<Position> route = new ArrayList<Position>();
+	static ArrayList<Position> route1 = new ArrayList<Position>();
+	static ArrayList<Position> route2 = new ArrayList<Position>();
 	static ArrayList<ArrayList<Position>> listOfPositions = new ArrayList<ArrayList<Position>>();
-	static Robot robot = new Robot();
-	static String robotMovement;
-	static int speedDifference;
+	static Robot robot1 = new Robot();
+	static Robot robot2 = new Robot();
+	static String robot1Movement;
+	static String robot2Movement;
+	static int robot1speedDifference;
+	static int robot2speedDifference;
 	static final int robotSpeed = 200;
 
 	public static void main(String[] args) {
 		
 		long startTime = System.currentTimeMillis();
+		
+		// camera feed information
 		Tracking track = new Tracking();
-		new Thread(track).run();
-		//track.run();
-		// TODO: CALL CONSTRUCTOR OF HSV_IMAGE_ANALYSIS CLASS
+		
+		// establish bluetooth connections
+		BluetoothConnectionFactory btcRobot1 = new BluetoothConnectionFactory("MaxPower", "0016530A6E9D");
+//		BluetoothConnectionFactory btcRobot2 = new BluetoothConnectionFactory("NXT", "00165308F2B7");
 
-		while (track.trackingThreadFinished != false) {
-			System.out.println("FINALDATA, TEST: " + track.getData().toString());
+		while (true) {
+			// get objects from video feed
+			//track.run();
 			listOfPositions.addAll(track.getData());
-			// TODO: call function in hsv_image_class
-			// SHOULD RETURN A LIST OF LISTS WITH DATA
-			// I.E. A LIST OF POSITIONS OF RED BLOCKS, GREEN BLOCKS, POSITION OF ROBOT FRONT AND BACK
-			// redBlocks, greenBlocks, robotFront, robotBack
-			// fetch_data_from_hsv_image_class();
-			
-			// TODO: listOfPositions = fetch_data_from_hsv_image_class();
 			
 			// get data from video feed (hsv_image_class)
 			// center positions of all red blocks
 			redBlocks = listOfPositions.get(0);
-			System.out.println("REDBLOCKS, TEST: "+ redBlocks.toString());
 			// center positions for all green blocks
 			greenBlocks = listOfPositions.get(1);
-			System.out.println("GREENBLOCKS, TEST: "+ greenBlocks.toString());
-			// center position for the robot's front square
-			System.out.println("ROBOTFRONT, TEST: " +listOfPositions.get(2).toString());
-			robotFront = listOfPositions.get(2).get(0);//TODO
-			// center position for the robot's back square
-			robotBack = (listOfPositions.get(3)).get(0);
+			// center position for the robot1's front and back square
+			robot1Front = listOfPositions.get(2).get(0);
+			robot1Back = listOfPositions.get(3).get(0);
+			// center position for the robot2's back square
+//			robot2Front = listOfPositions.get(4).get(0);
+//			robot2Back = listOfPositions.get(5).get(0);
 			
-			System.out.println(redBlocks.toString());
-			System.out.println(greenBlocks.toString());
-			System.out.println(robotFront.toString());
-			System.out.println(robotBack.toString());
-			try {
-				track.imageProcessing();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			// initialize robot1 and robot2
+			robot1.robotInit(robot1Front, robot1Back);
+//			robot2.robotInit(robot2Front, robot2Front);
+			
+			// map ports
+			ports = mapPorts(redBlocks, greenBlocks);
+			
+			// map routes
+			route1 = mapRoute(ports, robot1);
+//			route2 = mapRoute(ports, robot2);
+			// calculate robot movement - left/right
+			robot1Movement = calculateRobotMovement(robot1, route1);
+//			robot2Movement = calculateRobotMovement(robot1, route1);
+			// calculate speed difference on wheel
+			robot1speedDifference = calculateRobotSpeed(robot1, route1);
+//			robot2speedDifference = calculateRobotSpeed(robot2, route2);
+			
+			// send movement signals to Robot1's wheels using bluetooth
+			if (robot1Movement.equals("RIGHT")) {
+				btcRobot1.runRobot("a", Integer.toString(robotSpeed));
+				btcRobot1.runRobot("b", Integer.toString(robotSpeed-robot1speedDifference));
+			} else { // robotMovement.equals("LEFT")
+				btcRobot1.runRobot("b", Integer.toString(robotSpeed));
+				btcRobot1.runRobot("a", Integer.toString(robotSpeed-robot1speedDifference));
 			}
-			// initialize robot
-//			robot.robotInit(robotFront, robotBack);
-//			// map ports
-//			ports = mapPorts(redBlocks, greenBlocks);
-//			// map route
-//			route = mapRoute(ports, robot);
-//			// calculate robot movement - left/right
-//			robotMovement = calculateRobotMovement(robot, route);
-//			// calculate speed difference on wheel
-//			speedDifference = calculateRobotSpeed(robot, route);
-//			
-//			// send movement signals to the Robot's wheels
-//			if (robotMovement.equals("RIGHT")) {
-//				Motor.A.setSpeed(robotSpeed);
-//				Motor.B.setSpeed(robotSpeed-speedDifference);
-//				Motor.A.backward();
-//				Motor.B.backward();
+			
+			// send movement signals to Robot2's wheels using bluetooth
+//			if (robot2Movement.equals("RIGHT")) {
+//				btcRobot2.runRobot("a", Integer.toString(robotSpeed));
+//				btcRobot2.runRobot("b", Integer.toString(robotSpeed-robot2speedDifference));
 //			} else { // robotMovement.equals("LEFT")
-//				Motor.B.setSpeed(robotSpeed);
-//				Motor.A.setSpeed(robotSpeed-speedDifference);
-//				Motor.B.backward();
-//				Motor.A.backward();
+//				btcRobot2.runRobot("b", Integer.toString(robotSpeed));
+//				btcRobot2.runRobot("a", Integer.toString(robotSpeed-robot2speedDifference));
 //			}
-//			
-//			long middle = System.currentTimeMillis();
-//			long middleTime = middle - startTime;
-//			System.out.println("Calculation time: " + middleTime);
+			
+			long middle = System.currentTimeMillis();
+			long middleTime = middle - startTime;
+			System.out.println("Calculation time: " + middleTime);
 		}
 	}
 	
