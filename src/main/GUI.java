@@ -46,12 +46,15 @@ public class GUI implements Runnable {
 	private JSlider sliderSize;
 	private JLabel lblSMAX;
 	private JSlider sliderSMAX;
+	private JButton btnInnerBlock;
+	private JButton btnOuterBlock;
 	private boolean GREEN_OK = false;
 	private boolean RED_OK = false;
 	private boolean GREEN_PRESSED_BFR = false;
 	private boolean RED_PRESSED_BFR = false;
 	private ArrayList<Settings> settingList = new ArrayList<Settings>();
 	private boolean isSame = false;
+	private int counter = 0;
 	public GUI(){
 		
 	}
@@ -438,37 +441,47 @@ public class GUI implements Runnable {
 		lblSMAX.setBounds(30, 325, 200, 14);
 		panel.add(lblSMAX);
 		
-		JButton btnInnerBlock = new JButton("Green");
+		btnInnerBlock = new JButton("Green");
 		btnInnerBlock.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				setSettings("GREEN", "GREEN_SETTINGS");
+				btnInnerBlock.setBackground(Color.GREEN);
+				btnOuterBlock.setEnabled(true);
 			}
 		});
 		btnInnerBlock.setBounds(30, 505, 89, 23);
 		panel.add(btnInnerBlock);
 		
-		JButton btnOuterBlock = new JButton("Red");
+		btnOuterBlock = new JButton("Red");
+		btnOuterBlock.setEnabled(false);
 		btnOuterBlock.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				setSettings("RED", "RED_SETTINGS");
+				btnOuterBlock.setBackground(Color.GREEN);
+				btnFront.setEnabled(true);
 			}
 		});
 		btnOuterBlock.setBounds(129, 505, 89, 23);
 		panel.add(btnOuterBlock);
 		
 		btnFront = new JButton("Front");
+		btnFront.setEnabled(false);
 		btnFront.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				setSettings("FRONT", "FRONT_SETTINGS");
+				btnFront.setBackground(Color.GREEN);
+				btnBack.setEnabled(true);
 			}
 		});
 		btnFront.setBounds(228, 505, 89, 23);
 		panel.add(btnFront);
 		
 		btnBack = new JButton("Back");
+		btnBack.setEnabled(false);
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				setSettings("BACK", "BACK_SETTINGS");
+				btnBack.setBackground(Color.GREEN);
 			}
 		});
 		btnBack.setBounds(327, 505, 89, 23);
