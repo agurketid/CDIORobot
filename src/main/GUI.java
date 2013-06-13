@@ -1,4 +1,4 @@
-package main;
+package picture;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
@@ -12,6 +12,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.JButton;
 import javax.swing.JSeparator;
+
+
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -447,6 +449,8 @@ public class GUI implements Runnable {
 				setSettings("GREEN", "GREEN_SETTINGS");
 				btnInnerBlock.setBackground(Color.GREEN);
 				btnOuterBlock.setEnabled(true);
+				setSliders(75, 225, 0, 205, 255, 5);
+				
 			}
 		});
 		btnInnerBlock.setBounds(30, 505, 89, 23);
@@ -459,6 +463,7 @@ public class GUI implements Runnable {
 				setSettings("RED", "RED_SETTINGS");
 				btnOuterBlock.setBackground(Color.GREEN);
 				btnFront.setEnabled(true);
+				setSliders(75, 175, 143, 161, 255, 175);
 			}
 		});
 		btnOuterBlock.setBounds(129, 505, 89, 23);
@@ -471,6 +476,7 @@ public class GUI implements Runnable {
 				setSettings("FRONT", "FRONT_SETTINGS");
 				btnFront.setBackground(Color.GREEN);
 				btnBack.setEnabled(true);
+				setSliders(200, 0, 0, 230, 55, 130);
 			}
 		});
 		btnFront.setBounds(228, 505, 89, 23);
@@ -521,5 +527,19 @@ public class GUI implements Runnable {
 	public void run() {
 		initialize();
 		frame.setVisible(true);
+	}
+	public void setSliders(int r_min, int g_min, int b_min, int r_max,int g_max,int b_max){
+		this.sliderH_Min.setValue(r_min);
+		this.r_min = r_min;
+		this.sliderS_min.setValue(g_min);
+		this.g_min = g_min;
+		this.sliderV_min.setValue(b_min);
+		this.b_min = b_min;
+		this.sliderH_max.setValue(r_max);
+		this.r_max = r_max;
+		this.sliderS_max.setValue(g_max);
+		this.g_max = g_max;
+		this.sliderV_max.setValue(b_max);
+		this.b_max = b_max;
 	}
 }
